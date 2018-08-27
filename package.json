@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "tree-sitter": "./node_modules/.bin/tree-sitter"
+    "tree-sitter": "./node_modules/.bin/tree-sitter",
+    "build": "./node_modules/.bin/tree-sitter generate && node-gyp build",
+    "parse": "./node_modules/.bin/tree-sitter parse",
+    "install": "npm run build"
   },
   "author": "",
   "license": "ISC",

@@ -1,40 +1,27 @@
 {
   "name": "menhera",
   "rules": {
-    "program": {
+    "source_file": {
       "type": "SYMBOL",
       "name": "expr"
     },
-    "expr": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "variable"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "integer"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "binary_operation"
-        },
-        {
-          "type": "PREC",
-          "value": 0,
-          "content": {
-            "type": "SYMBOL",
-            "name": "let_in"
-          }
-        }
-      ]
+    "integer": {
+      "type": "PATTERN",
+      "value": "\\-?\\d+"
     },
-    "variable": {
+    "identifier": {
+      "type": "PATTERN",
+      "value": "[a-zA-Z0-9\\_]"
+    },
+    "expr_int": {
       "type": "SYMBOL",
-      "name": "name"
+      "name": "integer"
     },
-    "binary_operation": {
+    "expr_var": {
+      "type": "SYMBOL",
+      "name": "identifier"
+    },
+    "expr_bin_op": {
       "type": "CHOICE",
       "members": [
         {
@@ -78,10 +65,73 @@
               }
             ]
           }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expr"
+              },
+              {
+                "type": "STRING",
+                "value": "*"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "expr"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expr"
+              },
+              {
+                "type": "STRING",
+                "value": "/"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "expr"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expr"
+              },
+              {
+                "type": "STRING",
+                "value": "%"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "expr"
+              }
+            ]
+          }
         }
       ]
     },
-    "let_in": {
+    "expr_let": {
       "type": "SEQ",
       "members": [
         {
@@ -90,7 +140,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "name"
+          "name": "identifier"
         },
         {
           "type": "STRING",
@@ -110,13 +160,26 @@
         }
       ]
     },
-    "name": {
-      "type": "PATTERN",
-      "value": "^[a-zA-Z0-9\\_]+$"
-    },
-    "integer": {
-      "type": "PATTERN",
-      "value": "^\\-?\\d+$"
+    "expr": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "expr_int"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expr_var"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expr_bin_op"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expr_let"
+        }
+      ]
     }
   },
   "extras": [
