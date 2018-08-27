@@ -19,6 +19,17 @@ module.exports = grammar({
     // Helpers
     arguments: $ => seq($.identifier, optional(seq(',', $.arguments))),
     expressions: $ => seq($.expr, optional(seq(',', $.expressions))),
+    unit_expr: $ => choice(
+      $.expr_int,
+      $.expr_var,
+      seq('(', $.expr_compound, ')')
+    ),
+    compound_expr: $ => choice(
+      $.expr_bin_op,
+      $.expr_let,
+      $.expr_function,
+      $.expr_application
+    ),
     
     // Expressions
     expr_int: $ => $.integer,
@@ -40,17 +51,6 @@ module.exports = grammar({
         $.expressions,
         ')'
       )
-    ),
-    expr_unit: $ => choice(
-      $.expr_int,
-      $.expr_var,
-      seq('(', $.expr_compound, ')')
-    ),
-    expr_compound: $ => choice(
-      $.expr_bin_op,
-      $.expr_let,
-      $.expr_function,
-      $.expr_application
     ),
     expr: $ => choice(
       $.expr_unit,
