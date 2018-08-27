@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "tree-sitter": "./node_modules/.bin/tree-sitter"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": [
-    "tree-sitter-cli"
+    "tree-sitter-cli",
+    "node-gyp"
   ]
 }

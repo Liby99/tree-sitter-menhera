@@ -1,21 +1,20 @@
 module.exports = grammar({
   name: 'menhera',
   rules: {
-    source_file: $ => $.expr,
+    program: $ => $.expr,
     expr: $ => choice(
-      $.identifier,
-      $.number,
-      $.binary_expr
+      $.variable,
+      $.integer,
+      $.binary_operation,
+      prec(0, $.let_in)
     ),
-    binary_expr: $ => choice(
-      prec.left(1, seq($.expr, $.plus, $.expr)),
-      prec.left(1, seq($.expr, $.minus, $.expr)),
+    variable: $ => $.name,
+    binary_operation: $ => choice(
+      prec.left(1, seq($.expr, '+', $.expr)),
+      prec.left(1, seq($.expr, '-', $.expr))
     ),
-    plus: $ => /\+/,
-    minus: $ => /\-/,
-    eq: $ => /\=/,
-    let: $ => /let/,
-    identifier: $ => /[a-z]+/,
-    number: $ => /\d+/,
+    let_in: $ => seq('let', $.name, '=', $.expr, 'in', $.expr),
+    name: $ => /^[a-zA-Z0-9\_]+$/,
+    integer: $ => /^\-?\d+$/,
   }
 });
