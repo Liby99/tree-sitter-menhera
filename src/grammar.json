@@ -73,6 +73,57 @@
         }
       ]
     },
+    "unit_expr": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "expr_int"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expr_var"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SYMBOL",
+              "name": "compound_expr"
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        }
+      ]
+    },
+    "compound_expr": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "expr_bin_op"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expr_let"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expr_function"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expr_application"
+        }
+      ]
+    },
     "expr_int": {
       "type": "SYMBOL",
       "name": "integer"
@@ -274,67 +325,16 @@
         ]
       }
     },
-    "expr_unit": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "expr_int"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "expr_var"
-        },
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "("
-            },
-            {
-              "type": "SYMBOL",
-              "name": "expr_compound"
-            },
-            {
-              "type": "STRING",
-              "value": ")"
-            }
-          ]
-        }
-      ]
-    },
-    "expr_compound": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "expr_bin_op"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "expr_let"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "expr_function"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "expr_application"
-        }
-      ]
-    },
     "expr": {
       "type": "CHOICE",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "expr_unit"
+          "name": "unit_expr"
         },
         {
           "type": "SYMBOL",
-          "name": "expr_compound"
+          "name": "compound_expr"
         }
       ]
     }

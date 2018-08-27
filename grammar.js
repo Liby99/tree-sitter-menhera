@@ -22,7 +22,7 @@ module.exports = grammar({
     unit_expr: $ => choice(
       $.expr_int,
       $.expr_var,
-      seq('(', $.expr_compound, ')')
+      seq('(', $.compound_expr, ')')
     ),
     compound_expr: $ => choice(
       $.expr_bin_op,
@@ -52,9 +52,6 @@ module.exports = grammar({
         ')'
       )
     ),
-    expr: $ => choice(
-      $.expr_unit,
-      $.expr_compound
-    ),
+    expr: $ => choice($.unit_expr, $.compound_expr),
   }
 });
