@@ -14,11 +14,12 @@ module.exports = grammar({
     
     // Statics
     integer: $ => /\-?\d+/,
-    identifier: $ => /[a-zA-Z0-9\_]/,
+    identifier: $ => /[a-zA-Z\_][a-zA-Z0-9\_]+/,
     
     // Helpers
-    arguments: $ => seq($.identifier, optional(seq(',', $.arguments))),
+    arguments: $ => seq($.dec_var, optional(seq(',', $.arguments))),
     expressions: $ => seq($.expr, optional(seq(',', $.expressions))),
+    types: $ => seq($.type, optional(seq(',', $.types))),
     paren_expr: $ => seq('(', $.compound_expr, ')'),
     unit_expr: $ => choice(
       $.expr_int,
@@ -32,6 +33,16 @@ module.exports = grammar({
       $.expr_application
     ),
     
+    // Type
+    type: $ => choice($.unit_type, $.function_type),
+    unit_type: $ => $.identifier,
+    function_type: $ => seq('(', $.types, ')', '->', $.type),
+    
+    // Var Declarations
+    dec_var: $ => choice($.just_var, $.typed_var),
+    just_var: $ => $.identifier,
+    typed_var: $ => seq($.identifier, ':', $.type),
+    
     // Expressions
     expr_int: $ => $.integer,
     expr_var: $ => $.identifier,
@@ -42,8 +53,15 @@ module.exports = grammar({
       prec.left(PREC.MULT_DIV_MOD, seq($.expr, '/', $.expr)),
       prec.left(PREC.MULT_DIV_MOD, seq($.expr, '%', $.expr)),
     ),
-    expr_let: $ => seq('let', $.identifier, '=', $.expr, 'in', $.expr),
-    expr_function: $ => prec.right(seq('(', $.arguments, ')', '=>', $.expr)),
+    expr_let: $ => seq('let', $.dec_var, '=', $.expr, 'in', $.expr),
+    expr_function: $ => prec.right(seq(
+      '(',
+      $.arguments,
+      ')',
+      optional(seq(':', $.type)),
+      '=>',
+      $.expr
+    )),
     expr_application: $ => prec.left(
       PREC.APPLICATION,
       seq(
