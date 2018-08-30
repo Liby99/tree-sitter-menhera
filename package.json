@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-menhera",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "parse": "./node_modules/.bin/tree-sitter parse",
     "install": "node-gyp configure && npm run build"
   },
-  "author": "",
+  "author": "liby99",
   "license": "ISC",
   "devDependencies": [
     "tree-sitter-cli",
