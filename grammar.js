@@ -1,8 +1,8 @@
 const PREC = {
-  LET: 0,
-  PLUS_MINUS: 1,
-  MULT_DIV_MOD: 2,
-  APPLICATION: 3,
+  LET: 1,
+  PLUS_MINUS: 2,
+  MULT_DIV_MOD: 3,
+  APPLICATION: 4,
 };
 
 module.exports = grammar({
@@ -14,7 +14,38 @@ module.exports = grammar({
     
     // Statics
     integer: $ => /\-?\d+/,
-    identifier: $ => /[a-zA-Z\_][a-zA-Z0-9\_]+/,
+    identifier: $ => /[a-zA-Z\_][a-zA-Z0-9\_]*/,
+    
+    // Type
+    type: $ => choice($.unit_type, $.function_type),
+    unit_type: $ => $.identifier,
+    function_type: $ => seq('(', $.types, ')', '->', $.type),
+    
+    // Var Declarations
+    dec_var: $ => choice(
+      $.just_var,
+      $.typed_var
+    ),
+    just_var: $ => $.identifier,
+    typed_var: $ => seq($.identifier, ':', $.type),
+    
+    // // Expressions
+    expr_int: $ => $.integer,
+    expr_var: $ => $.identifier,
+    expr_bin_op: $ => choice(
+      prec.left(PREC.PLUS_MINUS, seq($.expr, '+', $.expr)),
+      prec.left(PREC.PLUS_MINUS, seq($.expr, '-', $.expr)),
+      // prec.left(PREC.MULT_DIV_MOD, seq($.expr, '*', $.expr)),
+      // prec.left(PREC.MULT_DIV_MOD, seq($.expr, '/', $.expr)),
+      // prec.left(PREC.MULT_DIV_MOD, seq($.expr, '%', $.expr)),
+    ),
+    expr_let: $ => seq('let', $.dec_var, prec(PREC.LET, '='), $.expr, 'in', $.expr),
+    expr_function: $ => prec.right(seq('(', $.arguments, ')', optional(seq(':', $.type)), '=>', $.expr)),
+    expr_application: $ => prec.left(PREC.APPLICATION, seq($.expr, '(', $.expressions, ')')),
+    expr: $ => choice(
+      $.unit_expr,
+      $.compound_expr
+    ),
     
     // Helpers
     arguments: $ => seq($.dec_var, optional(seq(',', $.arguments))),
@@ -32,45 +63,5 @@ module.exports = grammar({
       $.expr_function,
       $.expr_application
     ),
-    
-    // Type
-    type: $ => choice($.unit_type, $.function_type),
-    unit_type: $ => $.identifier,
-    function_type: $ => seq('(', $.types, ')', '->', $.type),
-    
-    // Var Declarations
-    dec_var: $ => choice($.just_var, $.typed_var),
-    just_var: $ => $.identifier,
-    typed_var: $ => seq($.identifier, ':', $.type),
-    
-    // Expressions
-    expr_int: $ => $.integer,
-    expr_var: $ => $.identifier,
-    expr_bin_op: $ => choice(
-      prec.left(PREC.PLUS_MINUS, seq($.expr, '+', $.expr)),
-      prec.left(PREC.PLUS_MINUS, seq($.expr, '-', $.expr)),
-      prec.left(PREC.MULT_DIV_MOD, seq($.expr, '*', $.expr)),
-      prec.left(PREC.MULT_DIV_MOD, seq($.expr, '/', $.expr)),
-      prec.left(PREC.MULT_DIV_MOD, seq($.expr, '%', $.expr)),
-    ),
-    expr_let: $ => seq('let', $.dec_var, '=', $.expr, 'in', $.expr),
-    expr_function: $ => prec.right(seq(
-      '(',
-      $.arguments,
-      ')',
-      optional(seq(':', $.type)),
-      '=>',
-      $.expr
-    )),
-    expr_application: $ => prec.left(
-      PREC.APPLICATION,
-      seq(
-        $.expr,
-        '(',
-        $.expressions,
-        ')'
-      )
-    ),
-    expr: $ => choice($.unit_expr, $.compound_expr),
   }
 });
