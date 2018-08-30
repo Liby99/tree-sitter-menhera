@@ -362,18 +362,17 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           lookahead == ' ')
         SKIP(20);
       if (('0' <= lookahead && lookahead <= '9'))
-        ADVANCE(26);
+        ADVANCE(10);
       if (('A' <= lookahead && lookahead <= 'Z') ||
           lookahead == '_' ||
           ('a' <= lookahead && lookahead <= 'z'))
-        ADVANCE(25);
+        ADVANCE(26);
       END_STATE();
     case 21:
       if (('0' <= lookahead && lookahead <= '9'))
         ADVANCE(10);
       END_STATE();
     case 22:
-      ACCEPT_TOKEN(sym_identifier);
       if (lookahead == 'e')
         ADVANCE(23);
       if (('0' <= lookahead && lookahead <= '9') ||
@@ -409,10 +408,8 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
         ADVANCE(25);
       END_STATE();
     case 26:
-      ACCEPT_TOKEN(sym_integer);
-      if (('0' <= lookahead && lookahead <= '9'))
-        ADVANCE(26);
-      if (('A' <= lookahead && lookahead <= 'Z') ||
+      if (('0' <= lookahead && lookahead <= '9') ||
+          ('A' <= lookahead && lookahead <= 'Z') ||
           lookahead == '_' ||
           ('a' <= lookahead && lookahead <= 'z'))
         ADVANCE(25);
@@ -455,11 +452,10 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           lookahead == '\r' ||
           lookahead == ' ')
         SKIP(29);
-      if (('0' <= lookahead && lookahead <= '9') ||
-          ('A' <= lookahead && lookahead <= 'Z') ||
+      if (('A' <= lookahead && lookahead <= 'Z') ||
           lookahead == '_' ||
           ('a' <= lookahead && lookahead <= 'z'))
-        ADVANCE(25);
+        ADVANCE(26);
       END_STATE();
     case 30:
       if (lookahead == 0)
@@ -1855,7 +1851,7 @@ static TSParseActionEntry ts_parse_actions[] = {
   [0] = {.count = 0, .reusable = false},
   [1] = {.count = 1, .reusable = true}, RECOVER(),
   [3] = {.count = 1, .reusable = false}, RECOVER(),
-  [5] = {.count = 1, .reusable = false}, SHIFT(2),
+  [5] = {.count = 1, .reusable = true}, SHIFT(2),
   [7] = {.count = 1, .reusable = false}, SHIFT(3),
   [9] = {.count = 1, .reusable = true}, SHIFT(4),
   [11] = {.count = 1, .reusable = false}, SHIFT(5),
