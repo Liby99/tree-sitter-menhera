@@ -29,7 +29,7 @@ module.exports = grammar({
     just_var: $ => $.identifier,
     typed_var: $ => seq($.identifier, ':', $.type),
     
-    // // Expressions
+    // Expressions
     expr_int: $ => $.integer,
     expr_var: $ => $.identifier,
     expr_bin_op: $ => choice(
